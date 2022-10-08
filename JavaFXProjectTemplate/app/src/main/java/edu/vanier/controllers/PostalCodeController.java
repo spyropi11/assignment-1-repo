@@ -14,16 +14,23 @@ import java.io.IOException;
 import java.util.HashMap;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.Pane;
 import javafx.scene.shape.Circle;
+import javafx.stage.Stage;
 
 /**
  *
  * @author Spyros
  */
 public class PostalCodeController{
+
     
     @FXML
     Button computeDistanceButton;
@@ -35,6 +42,10 @@ public class PostalCodeController{
     TextField postalCode2TextField;
     @FXML
     Button backDCButton;
+    @FXML
+    Button openDCMenuButton;
+    @FXML
+    Button openNPCMenuButton;
     
     
     private HashMap<String, PostalCode> postalCodes = new HashMap<>();
@@ -161,11 +172,46 @@ public class PostalCodeController{
         return nearbyLocations;
     }
     
+    @FXML
     public void handleDistanceTo(ActionEvent event){
         
         System.out.println("Distance button pressed");
         distanceValue.setText(Math.round(distanceTo(postalCode1TextField.getText(),postalCode2TextField.getText())) + "km");
         
+    }
+    
+    @FXML
+    public void handleSwitchToDCMenu(ActionEvent event) throws IOException{
+        
+        
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/data/distance_finder_menu.fxml"));
+        
+        PostalCodeController mainContoller = new PostalCodeController();
+        loader.setController(mainContoller);
+        
+        Parent root = loader.load();
+        Stage stage = (Stage)((Node)event.getSource()).getScene().getWindow();
+        
+        Scene scene = new Scene(root);
+        stage.setScene(scene);
+        stage.show();
+    }
+    
+    @FXML
+    public void handleSwitchToMainMenu(ActionEvent event) throws IOException{
+        
+        
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/data/postal_code_main_menu.fxml"));
+        
+        PostalCodeController mainContoller = new PostalCodeController();
+        loader.setController(mainContoller);
+        
+        Parent root = loader.load();
+        Stage stage = (Stage)((Node)event.getSource()).getScene().getWindow();
+        
+        Scene scene = new Scene(root);
+        stage.setScene(scene);
+        stage.show();
     }
     
     

@@ -8,7 +8,6 @@
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.RowConstraints?>
 
-
 <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="300.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1">
    <center>
       <GridPane fx:id="postalCode2Label" prefHeight="349.0" prefWidth="600.0" BorderPane.alignment="CENTER">
@@ -57,7 +56,7 @@
         </rowConstraints>
          <children>
             <Label fx:id="DCTitleLabel" scaleX="1.3" scaleY="1.3" scaleZ="1.3" text="Distance Between 2 Postal Codes" translateX="20.0" translateY="30.0" GridPane.columnIndex="1" />
-            <Button fx:id="backDCButton" mnemonicParsing="false" text="Back to main menu" translateX="20.0" translateY="-10.0" />
+            <Button fx:id="backDCButton" mnemonicParsing="false" onAction="#handleSwitchToMainMenu" text="Back to main menu" translateX="20.0" translateY="-10.0" />
          </children>
       </GridPane>
    </top>

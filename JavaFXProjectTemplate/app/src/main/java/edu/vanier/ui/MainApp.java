@@ -25,9 +25,7 @@ public class MainApp extends Application{
     @Override
     public void start(Stage stage) throws Exception {
         
-        FXMLLoader loader
-                = new FXMLLoader(
-                        getClass().getResource("/data/distance_finder_menu.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/data/postal_code_main_menu.fxml"));
         
         PostalCodeController mainContoller = new PostalCodeController();
         
@@ -35,7 +33,7 @@ public class MainApp extends Application{
         
         Pane root = loader.load();
         
-        Scene scene = new Scene(root,600,300);
+        Scene scene = new Scene(root);
         
         stage.setScene(scene);
         stage.sizeToScene();
