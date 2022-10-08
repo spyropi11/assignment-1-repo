@@ -20,6 +20,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.Circle;
@@ -47,9 +48,20 @@ public class PostalCodeController{
     @FXML
     Button openNPCMenuButton;
     
+    @FXML
+    Button nearbyLocationsButton;
+    @FXML
+    TextField radiusTextField;
+    @FXML
+    TextField postalCodeTextField;
+    @FXML
+    Button backNPCButton;
+    @FXML
+    ListView<String> postalCodeListView;
+    
+    
     
     private HashMap<String, PostalCode> postalCodes = new HashMap<>();
-    
     /* Default csvFilePath is set, if the user wants to change it they can use the PCC constructor 
     that modifies the file path */
     private String csvFilePath = "/data/zipcodes.csv";
@@ -157,6 +169,7 @@ public class PostalCodeController{
     
     public HashMap<String, PostalCode> nearbyLocations(String postalCode1, double distance){
         
+        parse(new ActionEvent());
         HashMap<String, PostalCode> nearbyLocations = new HashMap<>();
         
         for (PostalCode postalCode : postalCodes.values() ){
@@ -181,6 +194,25 @@ public class PostalCodeController{
     }
     
     @FXML
+    public void handlenearbyLocations(ActionEvent event){
+        
+        System.out.println("Nearby locations button pressed");
+        postalCodeListView.getItems().clear();
+        //System.out.println(nearbyLocations("X0B", 1000).values());
+        
+        for(PostalCode postalCode : nearbyLocations(postalCodeTextField.getText(), Double.parseDouble(radiusTextField.getText())).values()){
+            
+            postalCodeListView.getItems().add(postalCode.toString());
+            
+        }
+        
+        
+        
+        
+        
+    }
+    
+    @FXML
     public void handleSwitchToDCMenu(ActionEvent event) throws IOException{
         
         
@@ -196,6 +228,24 @@ public class PostalCodeController{
         stage.setScene(scene);
         stage.show();
     }
+    
+    @FXML
+    public void handleSwitchToNPCMenu(ActionEvent event) throws IOException{
+        
+        
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/data/nearby_postal_codes_menu.fxml"));
+        
+        PostalCodeController mainContoller = new PostalCodeController();
+        loader.setController(mainContoller);
+        
+        Parent root = loader.load();
+        Stage stage = (Stage)((Node)event.getSource()).getScene().getWindow();
+        
+        Scene scene = new Scene(root);
+        stage.setScene(scene);
+        stage.show();
+    }
+    
     
     @FXML
     public void handleSwitchToMainMenu(ActionEvent event) throws IOException{

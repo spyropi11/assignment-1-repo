@@ -19,7 +19,7 @@
         </rowConstraints>
          <children>
             <Button fx:id="openDCMenuButton" mnemonicParsing="false" onAction="#handleSwitchToDCMenu" text="Compute distance between two postal codes" translateX="20.0" />
-            <Button fx:id="openNPCMenuButton" mnemonicParsing="false" text="Find nearby postal codes within a radius" translateX="20.0" GridPane.columnIndex="1" />
+            <Button fx:id="openNPCMenuButton" mnemonicParsing="false" onAction="#handleSwitchToNPCMenu" text="Find nearby postal codes within a radius" translateX="20.0" GridPane.columnIndex="1" />
          </children>
       </GridPane>
    </center>
