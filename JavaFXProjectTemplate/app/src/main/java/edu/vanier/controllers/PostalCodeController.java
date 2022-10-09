@@ -8,7 +8,6 @@ package edu.vanier.controllers;
 import com.opencsv.CSVReader;
 import com.opencsv.CSVReaderBuilder;
 import edu.vanier.models.PostalCode;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.HashMap;
@@ -18,12 +17,11 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.Pane;
-import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
 
 /**
@@ -31,47 +29,66 @@ import javafx.stage.Stage;
  * @author Spyros
  */
 public class PostalCodeController{
-
     
+    // Controls for main menu
+    
+    //Button to go to the distance calculator(DC) menu
+    @FXML
+    Button openDCMenuButton;
+    //Button to go to the nearby postal codes calculator(NPC) menu
+    @FXML
+    Button openNPCMenuButton;
+    
+    //Controls for the distance calculator(DC) menu
+    
+    /*Button that calls for the contoller to compute the distance 
+        between both postal codes*/
     @FXML
     Button computeDistanceButton;
+    //Label that is changed to the value of the distance computed
     @FXML
     Label distanceValue;
     @FXML
     TextField postalCode1TextField;
     @FXML
     TextField postalCode2TextField;
+    //Button to go back to main menu
     @FXML
     Button backDCButton;
-    @FXML
-    Button openDCMenuButton;
-    @FXML
-    Button openNPCMenuButton;
     
+    //Controls for the nearby postal codes calculator(NPC) menu
+    
+    /*Button that calls for the contoller to compute and display the nearby 
+        locations found within the specified radius of a postal code*/
     @FXML
     Button nearbyLocationsButton;
     @FXML
     TextField radiusTextField;
     @FXML
     TextField postalCodeTextField;
+    //Button to go back to main menu
     @FXML
     Button backNPCButton;
+    //List view object that displays the ToString values of each nearby postal code
     @FXML
     ListView<String> postalCodeListView;
     
     
-    
+    //Hashmap holding the parsed postal code objects along with their keys from the csv file
     private HashMap<String, PostalCode> postalCodes = new HashMap<>();
+    
     /* Default csvFilePath is set, if the user wants to change it they can use the PCC constructor 
     that modifies the file path */
     private String csvFilePath = "/data/zipcodes.csv";
 
-    
     //Constructors
+    
+    //This constructor uses the default csv file path
     public PostalCodeController() {
         
     }
     
+    //This constructor allows the user to change the file path from it's default setting
     public PostalCodeController(String csvFilePath) {
         
         this.csvFilePath = csvFilePath;
@@ -97,11 +114,14 @@ public class PostalCodeController{
     //Methods
     
     /**
+     * This method parses the csv found from the data section of the project and 
+     * loads the data into a HashMap containing PostalCode objects along with their 
+     * keys which are the postal codes themselves.
+     * 
      * @param event
      * @return Returns a hashmap object containing PostalCode objects that can be accessed using postal code String keys.
      */
-    @FXML
-    public HashMap<String, PostalCode> parse(ActionEvent event){
+    public HashMap<String, PostalCode> parse(){
     
         String completeFilePath = getClass().getResource(csvFilePath).getPath();
         
@@ -110,8 +130,12 @@ public class PostalCodeController{
             CSVReader reader = new CSVReaderBuilder(new FileReader(completeFilePath)).build();
             String[] nextLine;
             
+            /*Checking that while the csv still has values to parse it continues to fill
+                the hashmap with the parsed information*/
             while ((nextLine = reader.readNext()) != null){
                 
+                /*All numbers represent the indexes of the current nextLine array 
+                    that holds the information from the csv file*/
                 postalCodes.put(nextLine[2], new PostalCode(Integer.parseInt(nextLine[0]),nextLine[3],nextLine[1],
                 nextLine[2],nextLine[4],Double.parseDouble(nextLine[5]),Double.parseDouble(nextLine[6])));
                 
@@ -125,24 +149,31 @@ public class PostalCodeController{
         }
         
     
-        return postalCodes;
+        return getPostalCodes();
     }
     
     
     
     /**
      * 
-     * @param from PostalCode object representing the postal code you want to start from.
-     * @param to PostalCode object representing the postal code you want to go to.
+     * This method takes 2 postal code String values and computes the distance 
+     * between them.
+     * 
+     * @param postalCode1 postal code String representing the postal code you want to start from.
+     * @param postalCode2 postal code String representing the postal code you want to go to.
      * @return Returns the distance between the two postal codes.
      */
     public double distanceTo(String postalCode1, String postalCode2){
         
-        HashMap<String, PostalCode> postalCodeHashmap = parse(new ActionEvent());
+        //Calling the parse method fills the Controller's postalCodes hashmap property
+        parse();
         
-        PostalCode from = postalCodeHashmap.get(postalCode1);
-        PostalCode to = postalCodeHashmap.get(postalCode2);
+        /*Using this hashmap we can retrieve the from and to postal code objects 
+            using their keys*/
+        PostalCode from = postalCodes.get(postalCode1);
+        PostalCode to = postalCodes.get(postalCode2);
         
+        //Haversine formula is below
         //ALL NUMBERS ARE IN THEIR RESPECTIVE SI UNITS
         final double RADIUS = 6371; /*kilometers*/
         
@@ -162,20 +193,30 @@ public class PostalCodeController{
     
     /**
      * 
-     * @param from PostalCode object representing the postal code you want to start from.
+     * This method takes a postal code String value as well as a radius double value
+     * and computes nearby PostalCode objects within said radius.
+     * 
+     * @param postalCode1 postal code String representing the postal code you want to start from.
      * @param distance Distance of the radius you want to search for nearby locations.
      * @return Hashmap 
      */
     
     public HashMap<String, PostalCode> nearbyLocations(String postalCode1, double distance){
         
-        parse(new ActionEvent());
+        //Calling the parse method fills the Controller's postalCodes hashmap property
+        parse();
+        
+        /*A hashmap containing the PostalCode objects of the nearby loactions as well as 
+            their associated keys is created*/
         HashMap<String, PostalCode> nearbyLocations = new HashMap<>();
         
+        //Iterates through postalCodes hashmap
         for (PostalCode postalCode : postalCodes.values() ){
             
+            //Checks whether the current postal code is within the radius of the specified postal code
             if(distanceTo(postalCode1, postalCode.getPostalCode()) <= distance){
                 
+                //If so, puts that PostalCode along with its key in the nearby locations hashmap
                 nearbyLocations.put(postalCode.getPostalCode(), postalCode);
                 
             }
@@ -185,33 +226,100 @@ public class PostalCodeController{
         return nearbyLocations;
     }
     
+    /**
+     * This method takes values from the distance calculator(DC) menu's postalCode1 text field and 
+     * postalCode2 text field and uses them along with the distanceTo method to change 
+     * the Label distanceValue in the scene to the computed distance between the two postal codes.
+     * 
+     * @param event 
+     */
     @FXML
     public void handleDistanceTo(ActionEvent event){
         
-        System.out.println("Distance button pressed");
-        distanceValue.setText(Math.round(distanceTo(postalCode1TextField.getText(),postalCode2TextField.getText())) + "km");
-        
-    }
-    
-    @FXML
-    public void handlenearbyLocations(ActionEvent event){
-        
-        System.out.println("Nearby locations button pressed");
-        postalCodeListView.getItems().clear();
-        //System.out.println(nearbyLocations("X0B", 1000).values());
-        
-        for(PostalCode postalCode : nearbyLocations(postalCodeTextField.getText(), Double.parseDouble(radiusTextField.getText())).values()){
+        try{
             
-            postalCodeListView.getItems().add(postalCode.toString());
+            System.out.println("Distance button pressed");
+            distanceValue.setText(Math.round(distanceTo(postalCode1TextField.getText().toUpperCase(),postalCode2TextField.getText().toUpperCase())) + "km");
+            
+        }catch(NullPointerException e){
+            
+            System.out.println("One or more postal codes have not been inputted or are not valid");
+            
+            Alert saveAlert = new Alert(Alert.AlertType.ERROR);
+            saveAlert.setHeaderText("Error");
+            saveAlert.setContentText("One or more postal codes have not been inputted or are not valid");
+            
+            saveAlert.showAndWait();
+            
+        }catch(Exception e){
+            
+            e.printStackTrace();
             
         }
         
         
+    }
+    
+    /**
+     * 
+     * This method takes values from the nearby postal codes calculator(NPC) menu's 
+     * postalCode text field as well as the radius text field and uses the 
+     * nearbyLocations method to compute and display nearby locations using the 
+     * scene's postalCode list view object.
+     * 
+     * @param event 
+     */
+    @FXML
+    public void handlenearbyLocations(ActionEvent event){
         
         
+        try{
+            System.out.println("Nearby locations button pressed");
+            postalCodeListView.getItems().clear();
+
+            for(PostalCode postalCode : nearbyLocations(postalCodeTextField.getText().toUpperCase(), Double.parseDouble(radiusTextField.getText())).values()){
+
+                postalCodeListView.getItems().add(postalCode.toString());
+
+            }
+            
+            
+        }catch(NullPointerException e){
+            
+            System.out.println("A valid postal code was not inputted");
+            
+            Alert saveAlert = new Alert(Alert.AlertType.ERROR);
+            saveAlert.setHeaderText("Error");
+            saveAlert.setContentText("A valid postal code was not inputted");
+            
+            saveAlert.showAndWait();
+            
+        }catch(NumberFormatException e){
+            
+            System.out.println("A field is either empty or the inputted text does not "
+                    + "match the expected value");
+            
+            Alert saveAlert = new Alert(Alert.AlertType.ERROR);
+            saveAlert.setHeaderText("Error");
+            saveAlert.setContentText("a field is either empty or the inputted text does not "
+                    + "match the expected value");
+            
+            saveAlert.showAndWait();
+            
+        }catch(Exception e){
+            
+            e.printStackTrace();
+            
+        }
         
     }
     
+    /**
+     * This method switches the scene from the main menu to DC menu.
+     * 
+     * @param event
+     * @throws IOException 
+     */
     @FXML
     public void handleSwitchToDCMenu(ActionEvent event) throws IOException{
         
@@ -229,6 +337,13 @@ public class PostalCodeController{
         stage.show();
     }
     
+    
+    /**
+     * This method switches the scene from the main menu to the NPC menu.
+     * 
+     * @param event
+     * @throws IOException 
+     */
     @FXML
     public void handleSwitchToNPCMenu(ActionEvent event) throws IOException{
         
@@ -247,6 +362,13 @@ public class PostalCodeController{
     }
     
     
+    /**
+     * 
+     * This menu switches the scene from the DC or NPC menu back to the main menu.
+     * 
+     * @param event
+     * @throws IOException 
+     */
     @FXML
     public void handleSwitchToMainMenu(ActionEvent event) throws IOException{
         

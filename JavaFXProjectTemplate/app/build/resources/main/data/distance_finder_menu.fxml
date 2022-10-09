@@ -41,7 +41,7 @@
         </rowConstraints>
          <children>
             <Label fx:id="distanceLabel" text="Distance between postal codes:" translateX="30.0" />
-            <Label fx:id="distanceValue" GridPane.columnIndex="1" />
+            <Label fx:id="distanceValue" textFill="#0f7c27" underline="true" GridPane.columnIndex="1" />
          </children>
       </GridPane>
    </bottom>

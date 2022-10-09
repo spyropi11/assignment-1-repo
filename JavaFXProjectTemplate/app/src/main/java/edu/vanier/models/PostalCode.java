@@ -12,24 +12,36 @@ package edu.vanier.models;
 public class PostalCode {
     
     //Properties
-    private int number;
     
-    private String id;
+    //The number of the postal code in the csv file (Not shown to user)
+    private int number;
+
+    //The name of the area that the postal code is situated in
+    private String name;
+    //The country that the postal code is in
     private String country;
+    //The postal code itself
     private String postalCode;
+    //The province that the postal code is in
     private String province;
+    //The latitude of the postal code
     private double latitude;
+    //The longitude of the postal code
     private double longitude;
     
     //Contructors
 
+    //Empty constructor
     public PostalCode() {
+        
+        
     }
     
-
-    public PostalCode(int number, String id, String country, String postalCode, String province, double latitude, double longitude) {
+    /*Contructor that allows the csv to fill a hashmap with the PostalCode 
+        object while specifying it's properties*/
+    public PostalCode(int number, String name, String country, String postalCode, String province, double latitude, double longitude) {
         this.number = number;
-        this.id = id;
+        this.name = name;
         this.country = country;
         this.postalCode = postalCode;
         this.province = province;
@@ -40,12 +52,12 @@ public class PostalCode {
     
     //Getters and Setters
 
-    public String getId() {
-        return id;
+    public String getName() {
+        return name;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getCountry() {
@@ -100,10 +112,12 @@ public class PostalCode {
     
     
     //Methods
+    
+    //ToString of the postal code class, allowing the object to be displayed to the user
     @Override
     public String toString(){
         
-        String string = getNumber() + ", " + getId() + ", " + getCountry() + ", " + getProvince() + ", " + getPostalCode() + ", " + getLatitude() + ", " + getLongitude();
+        String string = getName() + ", " + getCountry() + ", " + getProvince() + ", " + getPostalCode() + ", " + getLatitude() + ", " + getLongitude();
         
         return string;
     }

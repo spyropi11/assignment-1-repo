@@ -1,14 +1,10 @@
 package edu.vanier.ui;
 
 import edu.vanier.controllers.PostalCodeController;
-import edu.vanier.models.PostalCode;
-import java.util.HashMap;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 
@@ -25,17 +21,26 @@ public class MainApp extends Application{
     @Override
     public void start(Stage stage) throws Exception {
         
+        /* Creation of fxml loader as well as specification of the path 
+            detailing where to retrieve the fxml file */
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/data/postal_code_main_menu.fxml"));
         
+        /* Creation of an instance of the PostalCodeController that will be used
+            by the main menu to handle actions*/
         PostalCodeController mainContoller = new PostalCodeController();
         
+        //Setting the loader's controller to the previous instance
         loader.setController(mainContoller);
         
+        // Loading the fxml into a Pane object
         Pane root = loader.load();
         
         Scene scene = new Scene(root);
         
+        //Loading the scene into the window(stage)
         stage.setScene(scene);
+        
+        stage.setTitle("Main Menu");
         stage.sizeToScene();
         stage.show();
         
